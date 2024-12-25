@@ -48,6 +48,11 @@
       <version>${version.keycloak}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>failureaccess</artifactId>
+      <version>1.0</version>
+    </dependency>
   </dependencies>
 
   <build>
