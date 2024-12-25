@@ -27,3 +27,8 @@ Enable the Provider for a Realm
 Login to the <span>Keycloak</span> Admin Console and got to the User Federation tab.   You should now see your deployed providers in the add-provider list box.
 
 For the `crowd` provider, you will have to specify Crowd server base URL, application name and password.
+
+Debug
+-----
+mvn clean package
+docker-compose -f contrib/docker-compose.yml --verbose up 
