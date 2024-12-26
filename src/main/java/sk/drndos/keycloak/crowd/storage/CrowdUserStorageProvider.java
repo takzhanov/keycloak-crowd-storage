@@ -39,7 +39,8 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 @JBossLog
-public class CrowdUserStorageProvider implements UserStorageProvider,
+public class CrowdUserStorageProvider implements
+        UserStorageProvider,
         UserLookupProvider,
         UserQueryProvider,
         CredentialInputValidator {

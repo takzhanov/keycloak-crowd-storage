@@ -48,17 +48,18 @@
       <version>${version.keycloak}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>failureaccess</artifactId>
-      <version>1.0</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>com.google.guava</groupId>-->
+<!--      <artifactId>failureaccess</artifactId>-->
+<!--      <version>1.0</version>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
       <version>3.5.0.Final</version>
       <scope>provided</scope>
     </dependency>
+    <!--it needs for serialization from Crowd-->
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>

@@ -33,63 +33,63 @@ import java.util.List;
 @JBossLog
 public class CrowdStorageProviderFactory implements UserStorageProviderFactory<CrowdUserStorageProvider> {
 
-  public static final String PROVIDER_NAME = "crowd";
+    public static final String PROVIDER_NAME = "crowd";
 
-  protected static final List<ProviderConfigProperty> configMetadata;
+    protected static final List<ProviderConfigProperty> configMetadata;
 
-  static {
-    configMetadata = ProviderConfigurationBuilder.create()
-        .property().name("url")
-        .type(ProviderConfigProperty.STRING_TYPE)
-        .label("Crowd URL")
-        .helpText("Base url for Crowd server")
-        .add()
-        .property().name("applicationName")
-        .type(ProviderConfigProperty.STRING_TYPE)
-        .label("Crowd Application Name")
-        .helpText("Application name registered in Crowd server")
-        .add()
-        .property().name("applicationPassword")
-        .type(ProviderConfigProperty.PASSWORD)
-        .label("Crowd Application Password")
-        .helpText("Application password registered in Crowd server")
-        .add()
-        .build();
-  }
+    static {
+        configMetadata = ProviderConfigurationBuilder.create()
+                .property().name("url")
+                .type(ProviderConfigProperty.STRING_TYPE)
+                .label("Crowd URL")
+                .helpText("Base url for Crowd server")
+                .add()
+                .property().name("applicationName")
+                .type(ProviderConfigProperty.STRING_TYPE)
+                .label("Crowd Application Name")
+                .helpText("Application name registered in Crowd server")
+                .add()
+                .property().name("applicationPassword")
+                .type(ProviderConfigProperty.PASSWORD)
+                .label("Crowd Application Password")
+                .helpText("Application password registered in Crowd server")
+                .add()
+                .build();
+    }
 
-  @Override
-  public List<ProviderConfigProperty> getConfigProperties() {
-    return configMetadata;
-  }
+    @Override
+    public List<ProviderConfigProperty> getConfigProperties() {
+        return configMetadata;
+    }
 
-  @Override
-  public void validateConfiguration(KeycloakSession session, RealmModel realm, ComponentModel config)
-      throws ComponentValidationException {
-    String url = config.getConfig().getFirst("url");
-      if (url == null) {
-          throw new ComponentValidationException("please provide base URL to crowd server");
-      }
-    String applicationName = config.getConfig().getFirst("applicationName");
-      if (applicationName == null) {
-          throw new ComponentValidationException("please provide Application name registered in crowd");
-      }
-    String applicationPassword = config.getConfig().getFirst("applicationPassword");
-      if (applicationPassword == null) {
-          throw new ComponentValidationException("please provide Application password registered in crowd");
-      }
-  }
+    @Override
+    public void validateConfiguration(KeycloakSession session, RealmModel realm, ComponentModel config)
+            throws ComponentValidationException {
+        String url = config.getConfig().getFirst("url");
+        if (url == null) {
+            throw new ComponentValidationException("please provide base URL to crowd server");
+        }
+        String applicationName = config.getConfig().getFirst("applicationName");
+        if (applicationName == null) {
+            throw new ComponentValidationException("please provide Application name registered in crowd");
+        }
+        String applicationPassword = config.getConfig().getFirst("applicationPassword");
+        if (applicationPassword == null) {
+            throw new ComponentValidationException("please provide Application password registered in crowd");
+        }
+    }
 
-  @Override
-  public String getId() {
-    return PROVIDER_NAME;
-  }
+    @Override
+    public String getId() {
+        return PROVIDER_NAME;
+    }
 
-  @Override
-  public CrowdUserStorageProvider create(KeycloakSession session, ComponentModel model) {
-    String url = model.getConfig().getFirst("url");
-    String applicationName = model.getConfig().getFirst("applicationName");
-    String applicationPassword = model.getConfig().getFirst("applicationPassword");
-    CrowdClient client = new RestCrowdClientFactory().newInstance(url, applicationName, applicationPassword);
-    return new CrowdUserStorageProvider(session, model, client);
-  }
+    @Override
+    public CrowdUserStorageProvider create(KeycloakSession session, ComponentModel model) {
+        String url = model.getConfig().getFirst("url");
+        String applicationName = model.getConfig().getFirst("applicationName");
+        String applicationPassword = model.getConfig().getFirst("applicationPassword");
+        CrowdClient client = new RestCrowdClientFactory().newInstance(url, applicationName, applicationPassword);
+        return new CrowdUserStorageProvider(session, model, client);
+    }
 }

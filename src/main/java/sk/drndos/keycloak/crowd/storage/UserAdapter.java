@@ -16,6 +16,7 @@
  */
 package sk.drndos.keycloak.crowd.storage;
 
+import com.atlassian.crowd.integration.rest.entity.UserEntity;
 import com.atlassian.crowd.model.user.User;
 import org.keycloak.common.util.MultivaluedHashMap;
 import org.keycloak.component.ComponentModel;
@@ -24,7 +25,6 @@ import org.keycloak.models.RealmModel;
 import org.keycloak.storage.StorageId;
 import org.keycloak.storage.adapter.AbstractUserAdapterFederatedStorage;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,35 +34,37 @@ import java.util.stream.Stream;
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
+ *
+ * motivated by https://github.com/keycloak/keycloak-quickstarts/blob/main/extension/user-storage-jpa/src/main/java/org/keycloak/quickstart/storage/user/UserAdapter.java
  */
 public class UserAdapter extends AbstractUserAdapterFederatedStorage {
 
-    private final User entity;
+    private final User user;
     private final String keycloakId;
 
     private final Map<String, Function<User, String>> attributeFunctions = new HashMap<>() {{
         put("displayName", User::getDisplayName);
     }};
 
-    public UserAdapter(KeycloakSession session, RealmModel realm, ComponentModel model, User entity) {
+    public UserAdapter(KeycloakSession session, RealmModel realm, ComponentModel model, User user) {
         super(session, realm, model);
-        this.entity = entity;
-        keycloakId = StorageId.keycloakId(model, entity.getName());
+        this.user = user;
+        this.keycloakId = StorageId.keycloakId(model, user.getName());
     }
 
     @Override
     public String getFirstName() {
-        return entity.getFirstName();
+        return user.getFirstName();
     }
 
     @Override
     public String getLastName() {
-        return entity.getLastName();
+        return user.getLastName();
     }
 
     @Override
     public String getUsername() {
-        return entity.getName();
+        return user.getName();
     }
 
     @Override
@@ -71,13 +73,26 @@ public class UserAdapter extends AbstractUserAdapterFederatedStorage {
     }
 
     @Override
+    public String getEmail() {
+        return user.getEmailAddress();
+    }
+
+    @Override
     public void setEmail(String email) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
+    /**
+     * hack to show createdDate on user page.
+     */
     @Override
-    public String getEmail() {
-        return entity.getEmailAddress();
+    public Long getCreatedTimestamp() {
+        if (user instanceof UserEntity userEntity) {
+            if (userEntity.getCreatedDate() != null) {
+                return userEntity.getCreatedDate().getTime();
+            }
+        }
+        return super.getCreatedTimestamp();
     }
 
     @Override
@@ -102,7 +117,7 @@ public class UserAdapter extends AbstractUserAdapterFederatedStorage {
 
     @Override
     public String getFirstAttribute(String name) {
-        return attributeFunctions.getOrDefault(name, key -> super.getFirstAttribute(name)).apply(entity);
+        return attributeFunctions.getOrDefault(name, key -> super.getFirstAttribute(name)).apply(user);
     }
 
     @Override
@@ -110,14 +125,14 @@ public class UserAdapter extends AbstractUserAdapterFederatedStorage {
         Map<String, List<String>> attrs = super.getAttributes();
         MultivaluedHashMap<String, String> all = new MultivaluedHashMap<>();
         all.putAll(attrs);
-        attributeFunctions.forEach((key, value) -> all.add(key, value.apply(entity)));
+        attributeFunctions.forEach((key, value) -> all.add(key, value.apply(user)));
         return all;
     }
 
     @Override
     public Stream<String> getAttributeStream(String name) {
         if (attributeFunctions.containsKey(name)) {
-            return Stream.of(attributeFunctions.get(name).apply(entity));
+            return Stream.of(attributeFunctions.get(name).apply(user));
         } else {
             return super.getAttributeStream(name);
         }
